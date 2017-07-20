@@ -60,8 +60,9 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 }
 
 func (t *SimpleChaincode) add(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var err error
 	a, _ := stub.GetState("A")
-	Value, _ := strconv.Atoi(a)
+	Value, _ := strconv.Atoi(string(a))
 	Value++
 	// Write the state to the ledger
 	err = stub.PutState("A", []byte(strconv.Itoa(Value)))
