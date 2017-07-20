@@ -74,6 +74,7 @@ func (t *SimpleChaincode) add(stub shim.ChaincodeStubInterface, args []string) (
 }
 
 func (t *SimpleChaincode) reset(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var err error
 	err = stub.PutState("A", []byte(strconv.Itoa(1)))
 	if err != nil {
 		return nil, err
