@@ -23,9 +23,9 @@ package main
 //hard-coding.
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
@@ -35,26 +35,24 @@ import (
 type SimpleChaincode struct {
 }
 
-type TandV struct {
-	Time  int64
-	Value int
-}
-
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	var err error
-	var content TandV
-	content.Value = 0
-	content.Time = time.Now().UnixNano()
-	b, err := json.Marshal(content)
-	if err != nil {
-	}
+	var Value int
+	var Time int64
+
+	Value = 0
+	Time = time.Now().UnixNano()
 
 	// Write the state to the ledger
-	err = stub.PutState("A", []byte(b))
+	err = stub.PutState("Value", []byte(strconv.Itoa(Value)))
 	if err != nil {
 		return nil, err
 	}
-
+	// Write the state to the ledger
+	err = stub.PutState("Time", []byte(strconv.FormatInt(Time, 10)))
+	if err != nil {
+		return nil, err
+	}
 	return nil, nil
 }
 
@@ -69,19 +67,18 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 
 func (t *SimpleChaincode) add(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	var content TandV
-	a, _ := stub.GetState("A")
-	err = json.Unmarshal(a, &content)
-	if err != nil {
-		fmt.Println("error:", err)
-	}
-	content.Value++
-	content.Time = time.Now().UnixNano()
-	b, err := json.Marshal(content)
-	if err != nil {
-	}
+	var newTime int64
+	temV, _ := stub.GetState("Value")
+	V, _ := strconv.Atoi(temV)
+	V++
 	// Write the state to the ledger
-	err = stub.PutState("A", []byte(b))
+	err = stub.PutState("Value", []byte(strconv.Itoa(V)))
+	if err != nil {
+		return nil, err
+	}
+	newTime = time.Now().UnixNano()
+	// Write the state to the ledger
+	err = stub.PutState("Time", []byte(strconv.FormatInt(newTime, 10)))
 	if err != nil {
 		return nil, err
 	}
@@ -91,15 +88,16 @@ func (t *SimpleChaincode) add(stub shim.ChaincodeStubInterface, args []string) (
 
 func (t *SimpleChaincode) reset(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	var content TandV
-	content.Value = 0
-	content.Time = time.Now().UnixNano()
-	b, err := json.Marshal(content)
-	if err != nil {
-	}
+	T := time.Now().UnixNano()
+	V := 1
 
 	// Write the state to the ledger
-	err = stub.PutState("A", []byte(b))
+	err = stub.PutState("Value", []byte(strconv.Itoa(V)))
+	if err != nil {
+		return nil, err
+	}
+	// Write the state to the ledger
+	err = stub.PutState("Time", []byte(strconv.FormatInt(T, 10)))
 	if err != nil {
 		return nil, err
 	}
