@@ -69,7 +69,7 @@ func (t *SimpleChaincode) add(stub shim.ChaincodeStubInterface, args []string) (
 	var err error
 	var newTime int64
 	temV, _ := stub.GetState("Value")
-	V, _ := strconv.Atoi(temV)
+	V, _ := strconv.Atoi(string(temV))
 	V++
 	// Write the state to the ledger
 	err = stub.PutState("Value", []byte(strconv.Itoa(V)))
