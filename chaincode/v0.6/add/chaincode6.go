@@ -23,9 +23,10 @@ package main
 //hard-coding.
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
+	"time"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
@@ -34,15 +35,22 @@ import (
 type SimpleChaincode struct {
 }
 
-func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	var Value int // Asset holdings
-	var err error
+type TandV struct {
+	Time  int64
+	Value int
+}
 
-	// Initialize the chaincode
-	Value = 1
+func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	var err error
+	var content TandV
+	content.Value = 0
+	content.Time = time.Now().UnixNano()
+	b, err := json.Marshal(content)
+	if err != nil {
+	}
 
 	// Write the state to the ledger
-	err = stub.PutState("A", []byte(strconv.Itoa(Value)))
+	err = stub.PutState("A", []byte(b))
 	if err != nil {
 		return nil, err
 	}
@@ -61,11 +69,19 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 
 func (t *SimpleChaincode) add(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
+	var content TandV
 	a, _ := stub.GetState("A")
-	Value, _ := strconv.Atoi(string(a))
-	Value++
+	err = json.Unmarshal(a, &content)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	content.Value++
+	content.Time = time.Now().UnixNano()
+	b, err := json.Marshal(content)
+	if err != nil {
+	}
 	// Write the state to the ledger
-	err = stub.PutState("A", []byte(strconv.Itoa(Value)))
+	err = stub.PutState("A", []byte(b))
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +91,15 @@ func (t *SimpleChaincode) add(stub shim.ChaincodeStubInterface, args []string) (
 
 func (t *SimpleChaincode) reset(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	err = stub.PutState("A", []byte(strconv.Itoa(1)))
+	var content TandV
+	content.Value = 0
+	content.Time = time.Now().UnixNano()
+	b, err := json.Marshal(content)
+	if err != nil {
+	}
+
+	// Write the state to the ledger
+	err = stub.PutState("A", []byte(b))
 	if err != nil {
 		return nil, err
 	}
