@@ -89,7 +89,7 @@ func (t *SimpleChaincode) add(stub shim.ChaincodeStubInterface, args []string) (
 func (t *SimpleChaincode) reset(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
 	T := time.Now().UnixNano()
-	V := 1
+	V := 0
 
 	// Write the state to the ledger
 	err = stub.PutState("Value", []byte(strconv.Itoa(V)))
