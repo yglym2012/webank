@@ -1,12 +1,12 @@
-# <center>BCOS平台白皮书</center>
-## <center>面向分布式商业的区块链基础设施</center>
-### <center>V1.0<center>
-<center>  </center>
+# <div align=center>BCOS平台白皮书</div>
+## <div align=center>面向分布式商业的区块链基础设施</div>
+### <div align=center>V1.0</div>
+
 <div align=center><img src="./images/i0.1.png"/><img src="./images/i0.2.png"/></div>
 
-### <center>**Github**: Https://github.com/bcosorg/bcos</center>
+### <div align=center>**Github**: Https://github.com/bcosorg/bcos</div>
 
-### <center>2017年7月</center>
+### <div align=center>2017年7月</div>
 
 <!-- TOC -->
 
